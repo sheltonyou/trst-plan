@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>保诚信守明天多元货币计划 · 方案对比</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pay-color: #e53e3e;
+    --pay-light: #fff5f5;
+    --pay-border: #feb2b2;
+    --withdraw-color: #38a169;
+    --withdraw-light: #f0fff4;
+    --withdraw-border: #9ae6b4;
+    --inherit-color: #3182ce;
+    --inherit-light: #ebf8ff;
+    --inherit-border: #90cdf4;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #f7f8fc;
+    color: #1a202c;
+    padding: 32px 20px 72px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a365d;
+    letter-spacing: 0.01em;
+  }
+  .header .sub {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #718096;
+  }
+  .header .insured-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 18px;
+    background: #ebf4ff;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 500;
+  }
+  .legend-block {
+    width: 28px; height: 12px;
+    border-radius: 3px;
+  }
+  .lb-pay     { background: var(--pay-color); }
+  .lb-withdraw{ background: var(--withdraw-color); }
+  .lb-inherit { background: var(--inherit-color); }
+
+  /* ── Group ── */
+  .group {
+    margin-bottom: 52px;
+  }
+  .group-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .group-badge {
+    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    background: #feebc8;
+    color: #c05621;
+  }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border-top: 4px solid #ccc;
+  }
+  .card.type-flow    { border-top-color: #4299e1; }
+  .card.type-retire45{ border-top-color: #48bb78; }
+  .card.type-retire55{ border-top-color: #ed8936; }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .tag-flow     { background: #bee3f8; color: #2b6cb0; }
+  .tag-retire45 { background: #c6f6d5; color: #276749; }
+  .tag-retire55 { background: #fbd38d; color: #c05621; }
+  .card-nominal { font-size: 11px; color: #a0aec0; font-weight: 500; }
+
+  /* ── Money rows ── */
+  .money-section {
+    margin-bottom: 14px;
+  }
+  .money-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #f7fafc;
+  }
+  .money-row .ml { color: #718096; }
+  .money-row .mr { font-weight: 700; color: #2d3748; }
+  .mr.clr-pay      { color: var(--pay-color); }
+  .mr.clr-withdraw { color: var(--withdraw-color); }
+  .mr.clr-inherit  { color: var(--inherit-color); }
+
+  /* ── Timeline ── */
+  .timeline { margin: 16px 0; }
+  .timeline-label {
+    font-size: 11px;
+    color: #a0aec0;
+    margin-bottom: 6px;
+    font-weight: 500;
+    text-align: center;
+  }
+  .timeline-track {
+    height: 20px;
+    background: #edf2f7;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .tl-seg {
+    position: absolute;
+    height: 100%;
+    transition: all 0.3s;
+  }
+  .tl-pay     { background: var(--pay-color); border-radius: 10px 0 0 10px; }
+  .tl-gap     { background: #e2e8f0; }
+  .tl-withdraw{ background: var(--withdraw-color); }
+  .tl-inherit { background: var(--inherit-color); border-radius: 0 10px 10px 0; }
+  /* when withdraw goes all the way to end */
+  .tl-withdraw-end { background: var(--withdraw-color); border-radius: 0 10px 10px 0; }
+
+  .timeline-ages {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 10px;
+    color: #a0aec0;
+  }
+
+  /* ── Stat blocks linked to timeline colors ── */
+  .stats-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .stat-block {
+    border-radius: 10px;
+    padding: 11px 8px;
+    text-align: center;
+    border-left: 3px solid transparent;
+  }
+  .stat-block.sb-pay {
+    background: var(--pay-light);
+    border-left-color: var(--pay-color);
+  }
+  .stat-block.sb-withdraw {
+    background: var(--withdraw-light);
+    border-left-color: var(--withdraw-color);
+  }
+  .stat-block.sb-inherit {
+    background: var(--inherit-light);
+    border-left-color: var(--inherit-color);
+  }
+  .sb-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 5px;
+  }
+  .sb-pay     .sb-label { color: var(--pay-color); }
+  .sb-withdraw.sb-label { color: var(--withdraw-color); }
+  .sb-inherit .sb-label { color: var(--inherit-color); }
+  .sb-withdraw .sb-label { color: var(--withdraw-color); }
+  .sb-inherit  .sb-label { color: var(--inherit-color); }
+  .sb-value {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+  .sb-pay      .sb-value { color: var(--pay-color); }
+  .sb-withdraw .sb-value { color: var(--withdraw-color); }
+  .sb-inherit  .sb-value { color: var(--inherit-color); }
+  .sb-sub {
+    font-size: 9.5px;
+    color: #a0aec0;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+
+  /* ── Total bar ── */
+  .total-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #ebf8ff, #f0fff4);
+    border: 1px solid #90cdf4;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 12px;
+  }
+  .total-bar .tl-label { font-size: 12px; font-weight: 700; color: #2b6cb0; }
+  .total-bar .tl-value { font-size: 19px; font-weight: 800; color: #1a365d; }
+
+  /* ── Rate boxes ── */
+  .rates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .rate-box {
+    border-radius: 10px;
+    padding: 11px;
+    text-align: center;
+  }
+  .rate-box.simple   { background: #fffaf0; border: 1px solid #fbd38d; }
+  .rate-box.compound { background: #f0fff4; border: 1px solid #9ae6b4; }
+  .rate-label { font-size: 10px; font-weight: 700; color: #718096; letter-spacing: 0.04em; margin-bottom: 3px; }
+  .rate-value { font-size: 22px; font-weight: 800; }
+  .rate-box.simple   .rate-value { color: #c05621; }
+  .rate-box.compound .rate-value { color: #276749; }
+  .rate-desc { font-size: 10px; color: #a0aec0; margin-top: 2px; }
+
+  /* ── Comparison section ── */
+  .compare-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-bottom: 40px;
+  }
+  .compare-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1a365d;
+    margin-bottom: 6px;
+  }
+  .compare-sub {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 24px;
+  }
+
+  /* ── Table ── */
+  .compare-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 32px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 680px;
+  }
+  th {
+    background: #f7fafc;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  th.left { text-align: left; }
+  td {
+    padding: 10px 12px;
+    text-align: center;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 13px;
+  }
+  td.left { text-align: left; }
+  tr:hover td { background: #f7fafc; }
+
+  .plan-name {
+    font-weight: 700;
+    color: #2d3748;
+    display: block;
+  }
+  .plan-type {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 2px;
+  }
+  .pt-flow     { background: #bee3f8; color: #2b6cb0; }
+  .pt-retire45 { background: #c6f6d5; color: #276749; }
+  .pt-retire55 { background: #fbd38d; color: #c05621; }
+
+  .td-pay      { color: var(--pay-color); font-weight: 700; }
+  .td-withdraw { color: var(--withdraw-color); font-weight: 700; }
+  .td-inherit  { color: var(--inherit-color); font-weight: 700; }
+  .td-total    { color: #1a365d; font-weight: 800; font-size: 14px; }
+  .td-irr      { color: #276749; font-weight: 800; }
+  .td-simple   { color: #c05621; font-weight: 700; }
+
+  /* separator row */
+  .sep-row td {
+    background: #f7fafc;
+    font-size: 11px;
+    font-weight: 700;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    border-top: 2px solid #e2e8f0;
+  }
+
+  /* ── Charts ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 8px;
+  }
+  .chart-wrap {
+    background: #f7f8fc;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .chart-wrap h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .chart-container {
+    position: relative;
+    height: 260px;
+  }
+
+  /* ── Note ── */
+  .note {
+    text-align: center;
+    margin-top: 36px;
+    font-size: 11px;
+    color: #a0aec0;
+    line-height: 1.9;
+  }
+
+  @media (max-width: 680px) {
+    .cards-row  { grid-template-columns: 1fr; }
+    .stats-3    { grid-template-columns: 1fr 1fr; }
+    .charts-grid{ grid-template-columns: 1fr; }
+  }
+
+/* ══ MOBILE RESPONSIVE ═══════════════════════════════════ */
+@media (max-width: 768px) {
+  body { font-size: 13px; background: #f0f2f8; }
+  .container { padding: 12px 10px; }
+
+  .page-title { font-size: 18px; line-height: 1.3; }
+  .page-sub   { font-size: 11px; }
+
+  /* Group header */
+  .group-title {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 14px;
+  }
+  .group-badge { font-size: 11px; }
+
+  /* Cards stack to 1 column */
+  .cards-row {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card { padding: 14px 12px; }
+
+  .card-header { flex-wrap: wrap; gap: 4px; }
+  .card-tag { font-size: 10px; padding: 3px 8px; }
+  .card-nominal { font-size: 10px; }
+
+  .money-section { gap: 4px; margin-bottom: 12px; }
+  .money-row { font-size: 12px; }
+
+  /* Timeline */
+  .timeline { margin: 10px 0; }
+  .timeline-label { font-size: 9px; }
+  .timeline-track { height: 14px; }
+  .timeline-ages { font-size: 9px; }
+
+  /* Stat blocks */
+  .stats-3 { gap: 6px; }
+  .stat-block { padding: 8px 6px; border-radius: 8px; }
+  .sb-label { font-size: 9px; }
+  .sb-value { font-size: 15px; }
+  .sb-sub   { font-size: 9px; }
+
+  /* Total bar */
+  .total-bar { padding: 8px 10px; font-size: 12px; }
+  .tl-value  { font-size: 14px; }
+
+  /* Rate boxes */
+  .rates { gap: 6px; }
+  .rate-box { padding: 10px 6px; }
+  .rate-label { font-size: 9px; }
+  .rate-value { font-size: 18px; }
+  .rate-desc  { font-size: 9px; }
+
+  /* Compare section */
+  .compare-section { padding: 14px 12px; border-radius: 12px; }
+  .compare-title { font-size: 15px; }
+  .compare-sub   { font-size: 11px; }
+
+  /* Tables: scroll horizontally */
+  .compare-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+  .compare-table-wrap table { min-width: 520px; font-size: 11px; }
+  .compare-table-wrap th,
+  .compare-table-wrap td { padding: 7px 8px; }
+
+  /* No-withdrawal chart */
+  canvas { max-height: 220px; }
+
+  /* Section titles */
+  .compare-title { text-align: left; }
+
+  /* Note at bottom */
+  .note { font-size: 10px; padding: 12px; }
+}
+
+@media (max-width: 480px) {
+  .page-title { font-size: 16px; }
+  .stats-3 { grid-template-columns: 1fr 1fr; }
+  .stats-3 .stat-block:last-child { grid-column: 1 / -1; }
+  .rate-value { font-size: 16px; }
+  .sb-value   { font-size: 14px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════ -->
+<div class="header">
+  <h1>保诚信守明天多元货币计划</h1>
+  <div class="sub">Prudential MultiChoice TrustTerm · 六大方案完整对比</div>
+  <div class="insured-tag">受保人：31岁女性（非吸烟）· 供款5年 · 保障终身 · 保单货币：美元</div>
+</div>
+
+<!-- ══ LEGEND ═══════════════════════════════════════════ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-block lb-pay"></div>供款期（第1–5年）</div>
+  <div class="legend-item"><div class="legend-block lb-withdraw"></div>领取期（年年拿钱）</div>
+  <div class="legend-item"><div class="legend-block lb-inherit"></div>滚存传承期（保单继续增值）</div>
+</div>
+
+
+<!-- ══ GROUP 1: 150k ════════════════════════════════════ -->
+<div class="group">
+  <div class="group-title">
+    方案一
+    <span class="group-badge">每年 $30,000 × 5年 = 总保费 $150,000</span>
+  </div>
+  <div class="cards-row">
+
+    <!-- 方案A：灵活现金流 -->
+    <div class="card type-flow">
+      <div class="card-header">
+        <span class="card-tag tag-flow">灵活现金流型</span>
+        <span class="card-nominal">名义金额 150,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$30,000 / 年 × 5年</span></div>
+        <div class="money-row"><span class="ml">📅 开始领取</span><span class="mr clr-withdraw">第6年起（36岁起）</span></div>
+        <div class="money-row"><span class="ml">💵 每年领取</span><span class="mr clr-withdraw">+$10,000 / 年</span></div>
+        <div class="money-row"><span class="ml">⏱ 领取年期</span><span class="mr">65年（持续至100岁）</span></div>
+        <div class="money-row"><span class="ml">🏦 领完后继续滚存传承</span><span class="mr clr-inherit">同步增值至101岁</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"      style="left:0%;    width:7.1%"></div>
+          <div class="tl-seg tl-withdraw-end" style="left:7.1%;  width:92.9%"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总供款</div>
+          <div class="sb-value">$150,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$650,000</div>
+          <div class="sb-sub">供款的 4.3×<br>领取65年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$1,127,899</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$1,777,899</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">15.50%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.21%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方案B：55岁退休 -->
+    <div class="card type-retire55">
+      <div class="card-header">
+        <span class="card-tag tag-retire55">55岁退休计划</span>
+        <span class="card-nominal">名义金额 150,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$30,000 / 年 × 5年</span></div>
+        <div class="money-row"><span class="ml">📅 开始领取</span><span class="mr clr-withdraw">第25年起（55岁起）</span></div>
+        <div class="money-row"><span class="ml">💵 每年领取</span><span class="mr clr-withdraw">+$42,000 / 年</span></div>
+        <div class="money-row"><span class="ml">⏱ 领取年期</span><span class="mr">36年（至90岁）</span></div>
+        <div class="money-row"><span class="ml">🏦 90岁后继续滚存传承</span><span class="mr clr-inherit">保单持续增值</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"     style="left:0%;    width:7.1%"></div>
+          <div class="tl-seg tl-withdraw"style="left:34.3%; width:51.4%"></div>
+          <div class="tl-seg tl-inherit" style="left:85.7%; width:14.3%"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总供款</div>
+          <div class="sb-value">$150,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$1,512,000</div>
+          <div class="sb-sub">供款的 10.1×<br>领取36年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$410,657</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$1,922,657</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">16.88%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.50%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ GROUP 2: 250k ════════════════════════════════════ -->
+<div class="group">
+  <div class="group-title">
+    方案二
+    <span class="group-badge">每年 $50,000 × 5年 = 总保费 $250,000</span>
+  </div>
+  <div class="cards-row">
+
+    <!-- 方案C -->
+    <div class="card type-flow">
+      <div class="card-header">
+        <span class="card-tag tag-flow">灵活现金流型</span>
+        <span class="card-nominal">名义金额 250,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$50,000 / 年 × 5年</span></div>
+        <div class="money-row"><span class="ml">📅 开始领取</span><span class="mr clr-withdraw">第6年起（36岁起）</span></div>
+        <div class="money-row"><span class="ml">💵 每年领取</span><span class="mr clr-withdraw">+$17,500 / 年</span></div>
+        <div class="money-row"><span class="ml">⏱ 领取年期</span><span class="mr">65年（持续至100岁）</span></div>
+        <div class="money-row"><span class="ml">🏦 领完后继续滚存传承</span><span class="mr clr-inherit">同步增值至101岁</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"         style="left:0%;   width:7.1%"></div>
+          <div class="tl-seg tl-withdraw-end" style="left:7.1%; width:92.9%"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总供款</div>
+          <div class="sb-value">$250,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$1,137,500</div>
+          <div class="sb-sub">供款的 4.6×<br>领取65年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$760,755</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$1,898,255</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">9.42%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.06%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方案D：阶梯式 -->
+    <div class="card type-retire45">
+      <div class="card-header">
+        <span class="card-tag tag-retire45">阶梯式退休现金流</span>
+        <span class="card-nominal">名义金额 250,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$50,000 / 年 × 5年</span></div>
+        <div class="money-row" style="background:#f0fff4; border-radius:6px; padding:5px 4px; margin:4px 0;">
+          <span class="ml">✈️ <b>旅游基金</b>（40–55岁）</span><span class="mr clr-withdraw" style="font-size:13px;">+$10,000 / 年 × 16年</span>
+        </div>
+        <div class="money-row" style="background:#ebf8ff; border-radius:6px; padding:5px 4px; margin:4px 0;">
+          <span class="ml">🏖️ <b>退休养老</b>（56–84岁）</span><span class="mr clr-inherit" style="font-size:13px;">+$56,000 / 年 × 29年</span>
+        </div>
+        <div class="money-row"><span class="ml">🏦 84岁后继续滚存传承</span><span class="mr clr-inherit">保单持续增值</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"      style="left:0%;    width:7.1%"></div>
+          <div class="tl-seg tl-withdraw" style="left:12.9%; width:22.9%; opacity:0.65;"></div>
+          <div class="tl-seg tl-withdraw" style="left:35.7%; width:41.4%;"></div>
+          <div class="tl-seg tl-inherit"  style="left:77.1%; width:22.9%;"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:4px; font-size:10px; color:#718096; justify-content:center;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--withdraw-color);opacity:0.65;border-radius:2px;display:inline-block;"></span>旅游基金 $10,000/年</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--withdraw-color);border-radius:2px;display:inline-block;"></span>退休养老 $56,000/年</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--inherit-color);border-radius:2px;display:inline-block;"></span>传承滚存</span>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总保费</div>
+          <div class="sb-value">$250,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$1,784,000</div>
+          <div class="sb-sub">旅游$16万+养老$162万<br>领取45年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$1,326,213</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$3,110,213</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">16.34%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.50%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ GROUP 3: 500k ════════════════════════════════════ -->
+<div class="group">
+  <div class="group-title">
+    方案三
+    <span class="group-badge">每年 $100,000 × 5年 = 总保费 $500,000</span>
+  </div>
+  <div class="cards-row">
+
+    <!-- 方案E -->
+    <div class="card type-flow">
+      <div class="card-header">
+        <span class="card-tag tag-flow">灵活现金流型</span>
+        <span class="card-nominal">名义金额 500,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$100,000 / 年 × 5年</span></div>
+        <div class="money-row"><span class="ml">📅 开始领取</span><span class="mr clr-withdraw">第6年起（36岁起）</span></div>
+        <div class="money-row"><span class="ml">💵 每年领取</span><span class="mr clr-withdraw">+$35,000 / 年</span></div>
+        <div class="money-row"><span class="ml">⏱ 领取年期</span><span class="mr">65年（持续至100岁）</span></div>
+        <div class="money-row"><span class="ml">🏦 领完后继续滚存传承</span><span class="mr clr-inherit">同步增值至101岁</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"         style="left:0%;   width:7.1%"></div>
+          <div class="tl-seg tl-withdraw-end" style="left:7.1%; width:92.9%"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总供款</div>
+          <div class="sb-value">$500,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$2,275,000</div>
+          <div class="sb-sub">供款的 4.6×<br>领取65年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$1,521,511</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$3,796,511</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">9.42%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.06%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方案F：阶梯式 -->
+    <div class="card type-retire45">
+      <div class="card-header">
+        <span class="card-tag tag-retire45">阶梯式退休现金流</span>
+        <span class="card-nominal">名义金额 500,000</span>
+      </div>
+      <div class="money-section">
+        <div class="money-row"><span class="ml">💸 每年供款</span><span class="mr clr-pay">−$100,000 / 年 × 5年</span></div>
+        <div class="money-row" style="background:#f0fff4; border-radius:6px; padding:5px 4px; margin:4px 0;">
+          <span class="ml">✈️ <b>旅游基金</b>（40–55岁）</span><span class="mr clr-withdraw" style="font-size:13px;">+$30,000 / 年 × 16年</span>
+        </div>
+        <div class="money-row" style="background:#ebf8ff; border-radius:6px; padding:5px 4px; margin:4px 0;">
+          <span class="ml">🏖️ <b>退休养老</b>（56–84岁）</span><span class="mr clr-inherit" style="font-size:13px;">+$90,000 / 年 × 29年</span>
+        </div>
+        <div class="money-row"><span class="ml">🏦 84岁后继续滚存传承</span><span class="mr clr-inherit">保单持续增值</span></div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-label">保单年期（31岁 → 101岁）</div>
+        <div class="timeline-track">
+          <div class="tl-seg tl-pay"      style="left:0%;    width:7.1%"></div>
+          <div class="tl-seg tl-withdraw" style="left:12.9%; width:22.9%; opacity:0.65;"></div>
+          <div class="tl-seg tl-withdraw" style="left:35.7%; width:41.4%;"></div>
+          <div class="tl-seg tl-inherit"  style="left:77.1%; width:22.9%;"></div>
+        </div>
+        <div class="timeline-ages"><span>31岁</span><span>45岁</span><span>60岁</span><span>75岁</span><span>101岁</span></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:4px; font-size:10px; color:#718096; justify-content:center;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--withdraw-color);opacity:0.65;border-radius:2px;display:inline-block;"></span>旅游基金 $30,000/年</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--withdraw-color);border-radius:2px;display:inline-block;"></span>退休养老 $90,000/年</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:8px;background:var(--inherit-color);border-radius:2px;display:inline-block;"></span>传承滚存</span>
+      </div>
+
+      <div class="stats-3">
+        <div class="stat-block sb-pay">
+          <div class="sb-label">总保费</div>
+          <div class="sb-value">$500,000</div>
+          <div class="sb-sub">5年供完</div>
+        </div>
+        <div class="stat-block sb-withdraw">
+          <div class="sb-label">累计领取</div>
+          <div class="sb-value">$3,090,000</div>
+          <div class="sb-sub">旅游$48万+养老$261万<br>领取45年</div>
+        </div>
+        <div class="stat-block sb-inherit">
+          <div class="sb-label">101岁传承价值</div>
+          <div class="sb-value">$2,931,828</div>
+          <div class="sb-sub">持续滚存增值</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="tl-label">总回报（领取 + 传承）</span>
+        <span class="tl-value">$6,021,828</span>
+      </div>
+      <div class="rates">
+        <div class="rate-box simple">
+          <div class="rate-label">年化单利</div>
+          <div class="rate-value">15.78%</div>
+          <div class="rate-desc">以70年计算</div>
+        </div>
+        <div class="rate-box compound">
+          <div class="rate-label">年化复利（IRR）</div>
+          <div class="rate-value">6.50%</div>
+          <div class="rate-desc">考虑现金流时间</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ COMPARISON TABLE + CHARTS ═══════════════════════ -->
+<div class="compare-section">
+  <div class="compare-title">📊 六大方案横向对比</div>
+  <div class="compare-sub">相同颜色代表相同含义——红色=供款、绿色=领取、蓝色=传承价值</div>
+
+  <!-- Table -->
+  <div class="compare-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="left">方案</th>
+          <th style="color:var(--pay-color)">总供款</th>
+          <th style="color:var(--withdraw-color)">每年领取</th>
+          <th style="color:var(--withdraw-color)">开始年龄</th>
+          <th style="color:var(--withdraw-color)">领取年期</th>
+          <th style="color:var(--withdraw-color)">累计领取</th>
+          <th style="color:var(--inherit-color)">101岁传承价值</th>
+          <th>总回报</th>
+          <th style="color:#276749">年化复利</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="sep-row"><td colspan="9">▶ 方案一（每年$30,000 × 5年）</td></tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案一 · 灵活现金流</span>
+            <span class="plan-type pt-flow">从第6年起领取</span>
+          </td>
+          <td class="td-pay">$150,000</td>
+          <td class="td-withdraw">$10,000</td>
+          <td class="td-withdraw">36岁</td>
+          <td class="td-withdraw">65年</td>
+          <td class="td-withdraw">$650,000</td>
+          <td class="td-inherit">$1,127,899</td>
+          <td class="td-total">$1,777,899</td>
+          <td class="td-irr">6.21%</td>
+        </tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案一 · 55岁退休</span>
+            <span class="plan-type pt-retire55">安排退休现金流</span>
+          </td>
+          <td class="td-pay">$150,000</td>
+          <td class="td-withdraw">$42,000</td>
+          <td class="td-withdraw">55岁</td>
+          <td class="td-withdraw">36年</td>
+          <td class="td-withdraw">$1,512,000</td>
+          <td class="td-inherit">$410,657</td>
+          <td class="td-total">$1,922,657</td>
+          <td class="td-irr">6.50%</td>
+        </tr>
+
+        <tr class="sep-row"><td colspan="9">▶ 方案二（每年$50,000 × 5年）</td></tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案二 · 灵活现金流</span>
+            <span class="plan-type pt-flow">从第6年起领取</span>
+          </td>
+          <td class="td-pay">$250,000</td>
+          <td class="td-withdraw">$17,500</td>
+          <td class="td-withdraw">36岁</td>
+          <td class="td-withdraw">65年</td>
+          <td class="td-withdraw">$1,137,500</td>
+          <td class="td-inherit">$760,755</td>
+          <td class="td-total">$1,898,255</td>
+          <td class="td-irr">6.06%</td>
+        </tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案二 · 阶梯退休</span>
+            <span class="plan-type pt-retire45">旅游$1万+养老$5.6万</span>
+          </td>
+          <td class="td-pay">$250,000</td>
+          <td class="td-withdraw">$10K→$56K</td>
+          <td class="td-withdraw">40岁起</td>
+          <td class="td-withdraw">45年</td>
+          <td class="td-withdraw">$1,784,000</td>
+          <td class="td-inherit">$1,326,213</td>
+          <td class="td-total">$3,110,213</td>
+          <td class="td-irr">6.50%</td>
+        </tr>
+
+        <tr class="sep-row"><td colspan="9">▶ 方案三（每年$100,000 × 5年）</td></tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案三 · 灵活现金流</span>
+            <span class="plan-type pt-flow">从第6年起领取</span>
+          </td>
+          <td class="td-pay">$500,000</td>
+          <td class="td-withdraw">$35,000</td>
+          <td class="td-withdraw">36岁</td>
+          <td class="td-withdraw">65年</td>
+          <td class="td-withdraw">$2,275,000</td>
+          <td class="td-inherit">$1,521,511</td>
+          <td class="td-total">$3,796,511</td>
+          <td class="td-irr">6.06%</td>
+        </tr>
+        <tr>
+          <td class="left">
+            <span class="plan-name">方案三 · 阶梯退休</span>
+            <span class="plan-type pt-retire45">旅游$3万+养老$9万</span>
+          </td>
+          <td class="td-pay">$500,000</td>
+          <td class="td-withdraw">$30K→$90K</td>
+          <td class="td-withdraw">40岁起</td>
+          <td class="td-withdraw">45年</td>
+          <td class="td-withdraw">$3,090,000</td>
+          <td class="td-inherit">$2,931,828</td>
+          <td class="td-total">$6,021,828</td>
+          <td class="td-irr">6.50%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No-withdrawal growth section -->
+  <div style="margin-top:32px;">
+    <div class="compare-title" style="font-size:15px; margin-bottom:4px;">📈 如果不取款，保单价值如何随时间增长？</div>
+    <div class="compare-sub">下表展示三种方案在不作任何提取的情况下，各年龄节点的预计退保价值及对应收益率（以计划书为准）</div>
+
+    <!-- Growth table -->
+    <div class="compare-table-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead>
+          <tr>
+            <th>年龄</th>
+            <th>保单年期</th>
+            <th style="color:var(--pay-color)">方案一<br><span style="font-weight:400;color:#a0aec0">总保费$150,000</span></th>
+            <th style="color:#d69e2e">方案二<br><span style="font-weight:400;color:#a0aec0">总保费$250,000</span></th>
+            <th style="color:var(--inherit-color)">方案三<br><span style="font-weight:400;color:#a0aec0">总保费$500,000</span></th>
+            <th style="color:#c05621">年化单利</th>
+            <th style="color:#276749">年化复利（IRR）</th>
+          </tr>
+        </thead>
+        <tbody id="growth-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Growth chart -->
+    <div class="chart-wrap" style="background:#f7f8fc; border-radius:12px; padding:16px;">
+      <h4 style="text-align:center; font-size:13px; font-weight:700; color:#2d3748; margin-bottom:14px;">三种方案保单价值增长曲线（不提取）</h4>
+      <div style="position:relative; height:300px;">
+        <canvas id="growthChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REBATE SECTION ════════════════════════════════════ -->
+<div class="compare-section" style="margin-bottom:40px;">
+  <div class="compare-title">🎁 供款方式 · 首年回赠优惠对比</div>
+  <div class="compare-sub">按年缴供款，第二年将回赠存入保费储蓄账户，直接降低实际净投入成本</div>
+
+  <!-- Rebate summary table -->
+  <div class="compare-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="left">供款模式</th>
+          <th>每年保费</th>
+          <th>供款年期</th>
+          <th>总保费</th>
+          <th>首年回赠比例</th>
+          <th style="color:#276749;">回赠金额</th>
+          <th style="color:#276749;">实际净投入</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left"><span class="plan-name" style="color:#e53e3e;">方案一</span></td>
+          <td style="color:#e53e3e; font-weight:700;">$30,000</td>
+          <td>5年</td>
+          <td style="font-weight:700;">$150,000</td>
+          <td style="color:#d69e2e; font-weight:700;">7%</td>
+          <td style="color:#276749; font-weight:800;">+$2,100</td>
+          <td style="color:#276749; font-weight:800;">$147,900</td>
+        </tr>
+        <tr>
+          <td class="left"><span class="plan-name" style="color:#d69e2e;">方案二</span></td>
+          <td style="color:#d69e2e; font-weight:700;">$50,000</td>
+          <td>5年</td>
+          <td style="font-weight:700;">$250,000</td>
+          <td style="color:#d69e2e; font-weight:700;">11%</td>
+          <td style="color:#276749; font-weight:800;">+$5,500</td>
+          <td style="color:#276749; font-weight:800;">$244,500</td>
+        </tr>
+        <tr>
+          <td class="left"><span class="plan-name" style="color:#3182ce;">方案三</span></td>
+          <td style="color:#3182ce; font-weight:700;">$100,000</td>
+          <td>5年</td>
+          <td style="font-weight:700;">$500,000</td>
+          <td style="color:#276749; font-weight:800;">20%</td>
+          <td style="color:#276749; font-weight:800;">+$20,000</td>
+          <td style="color:#276749; font-weight:800;">$480,000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:10px; font-size:11px; color:#a0aec0; text-align:center;">
+    💡 回赠金额于第2保单年存入保费储蓄账户，供款规模越大，回赠比例越高。
+  </div>
+</div>
+
+<div class="note">
+  ⚠️ 以上数据来源于保诚保险有限公司计划书（印发日期：2026年3月26日）<br>
+  非保证金额（归原红利、终期红利）基于现时预计回报，实际金额或高或低。<br>
+  年化单利以第1保单年至ANB101（70年）计算；年化复利（IRR）已考虑实际现金流时间。<br>
+  此对比仅供参考，不构成任何投保建议。
+</div>
+
+<script>
+// ── No-withdrawal growth data ──────────────────────────
+// [year, age_label, v150k, v250k, v500k, simple_rate%, irr%]
+const growthData = [
+  [5,  "35岁",     76_979,    128_298,    256_594,  -9.74, -21.46],
+  [10, "40岁",    191_759,    319_598,    639_196,   2.78,   3.11],
+  [15, "45岁",    283_404,    472_339,    944_676,   5.93,   5.00],
+  [20, "50岁",    415_701,    692_835,  1_385_670,   8.86,   5.81],
+  [25, "55岁",    620_203,  1_033_670,  2_067_339,  12.54,   6.35],
+  [30, "60岁",    877_924,  1_463_207,  2_926_411,  16.18,   6.50],
+  [35, "65岁",  1_202_593,  2_004_321,  4_008_640,  20.05,   6.50],
+  [40, "70岁",  1_647_841,  2_746_401,  5_492_799,  24.96,   6.50],
+  [45, "75岁",  2_257_873,  3_763_121,  7_526_240,  31.23,   6.50],
+  [50, "80岁",  3_093_688,  5_156_146, 10_312_289,  39.25,   6.50],
+  [55, "85岁",  4_238_837,  7_064_728, 14_129_453,  49.56,   6.50],
+  [60, "90岁",  5_807_841,  9_679_735, 19_359_470,  62.86,   6.50],
+  [65, "95岁",  7_957_533, 13_262_556, 26_525_111,  80.08,   6.50],
+  [70, "101岁",10_902_820, 18_171_367, 36_342_734, 102.41,   6.50],
+];
+
+// ── Render table ──────────────────────────────────────
+const tbody = document.getElementById('growth-tbody');
+const fmt = v => '$' + v.toLocaleString();
+const fmtM = v => v >= 1_000_000
+  ? '$' + (v/1_000_000).toFixed(2) + 'M'
+  : '$' + v.toLocaleString();
+
+growthData.forEach(([yr, age, v1, v2, v3, simple, irr]) => {
+  const isNeg = simple < 0;
+  const rateColor = isNeg ? '#e53e3e' : (irr >= 6.5 ? '#276749' : '#c05621');
+  const rowBg = yr <= 5 ? 'background:#fff5f5;' : '';
+  const milestoneStyle = [15,25,30].includes(yr) ? 'border-top:2px solid #e2e8f0;' : '';
+  tbody.innerHTML += `
+    <tr style="${rowBg}${milestoneStyle}">
+      <td style="font-weight:700; color:#2d3748;">${age}</td>
+      <td style="color:#718096;">第${yr}年</td>
+      <td style="color:#e53e3e; font-weight:700;">${fmtM(v1)}</td>
+      <td style="color:#d69e2e; font-weight:700;">${fmtM(v2)}</td>
+      <td style="color:#3182ce; font-weight:700;">${fmtM(v3)}</td>
+      <td style="color:${rateColor}; font-weight:700;">${simple.toFixed(2)}%</td>
+      <td style="color:${rateColor}; font-weight:800;">${irr.toFixed(2)}%</td>
+    </tr>`;
+});
+
+// ── Growth line chart ──────────────────────────────────
+const ageLabels = growthData.map(d => d[1]);
+const v1data = growthData.map(d => d[2]);
+const v2data = growthData.map(d => d[3]);
+const v3data = growthData.map(d => d[4]);
+
+new Chart(document.getElementById('growthChart').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: ageLabels,
+    datasets: [
+      {
+        label: '方案一（总保费$150,000）',
+        data: v1data,
+        borderColor: '#e53e3e',
+        backgroundColor: '#e53e3e18',
+        pointBackgroundColor: '#e53e3e',
+        pointRadius: 4,
+        borderWidth: 2.5,
+        fill: false,
+        tension: 0.35
+      },
+      {
+        label: '方案二（总保费$250,000）',
+        data: v2data,
+        borderColor: '#d69e2e',
+        backgroundColor: '#d69e2e18',
+        pointBackgroundColor: '#d69e2e',
+        pointRadius: 4,
+        borderWidth: 2.5,
+        fill: false,
+        tension: 0.35
+      },
+      {
+        label: '方案三（总保费$500,000）',
+        data: v3data,
+        borderColor: '#3182ce',
+        backgroundColor: '#3182ce18',
+        pointBackgroundColor: '#3182ce',
+        pointRadius: 4,
+        borderWidth: 2.5,
+        fill: false,
+        tension: 0.35
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { size: 11 }, padding: 14, usePointStyle: true }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+      y: {
+        ticks: {
+          font: { size: 10 },
+          callback: v => v >= 1_000_000 ? '$' + (v/1_000_000).toFixed(0) + 'M' : '$' + (v/1000).toFixed(0) + 'K'
+        },
+        grid: { color: '#edf2f7' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
